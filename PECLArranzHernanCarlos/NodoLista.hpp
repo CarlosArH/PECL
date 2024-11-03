@@ -9,7 +9,6 @@ public:
 	Proceso* proceso;
 	NodoLista* siguiente;
 private:
-
 	friend class Lista;
 };
 

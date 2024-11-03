@@ -1,5 +1,5 @@
-#include <iostream>
 #include "Proceso.hpp"
+
 using namespace std;
 
 class NodoPila{

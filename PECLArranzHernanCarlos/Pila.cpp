@@ -19,8 +19,9 @@ Proceso* Pila:: extraer()
 {
 	pnodoPila nodo;
 	Proceso* p;
-	if(!ultimo)
-		return NULL;
+	if (estaVacia()) {
+        return nullptr;
+    }
 	nodo = ultimo;
 	ultimo = nodo->siguiente;
 	p = nodo->proceso;
@@ -73,7 +74,7 @@ Pila::~Pila() {
 
 void Pila::generarProceso(int usuarios, int* array, int i){
 	int pid = array[i];
-	string usuario = "usuario" + to_string(usuarios++);
+	string usuario = "usuario" + to_string(usuarios);
 	bool tiempoReal = rand() % 2;
 	Proceso* proceso = new Proceso(pid, usuario, tiempoReal);
 	insertar(proceso);

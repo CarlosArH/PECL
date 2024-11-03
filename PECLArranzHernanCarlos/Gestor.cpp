@@ -6,7 +6,7 @@
 
 Gestor::Gestor() {
     pidCounter = 0;
-    usuarioCounter = 0;
+    usuarioCounter = 1;
     int n = 600;
     
     arrayPIDs = new int[n];
@@ -48,7 +48,7 @@ void Gestor::genera12Procesos() {
 
     for (int i = pidCounter; i < pidCounter + 12; i++) {
         pila.generarProceso(usuarioCounter, arrayPIDs, i);
-        usuarioCounter++;
+        ++usuarioCounter;
     }
     pidCounter = pidCounter + 12;
 }
@@ -131,38 +131,8 @@ void Gestor::muestraProcesosTiempoReal() {
 void Gestor::buscarProcesos() {
     Proceso* menorPrioridadNormal = nullptr;
     Proceso* mayorPrioridadTiempoReal = nullptr;
-
-    // Buscar proceso normal de menor prioridad
-    NodoLista* actual = listaNormal.cabeza;
-    while (actual != nullptr) {
-        if (menorPrioridadNormal == nullptr || actual->proceso->getPrioridad() < menorPrioridadNormal->getPrioridad()) {
-            menorPrioridadNormal = actual->proceso;
-        }
-        actual = actual->siguiente;
-    }
-
-    // Buscar proceso en tiempo real de mayor prioridad
-    actual = listaTiempoReal.cabeza;
-    while (actual != nullptr) {
-        if (mayorPrioridadTiempoReal == nullptr || actual->proceso->getPrioridad() > mayorPrioridadTiempoReal->getPrioridad()) {
-            mayorPrioridadTiempoReal = actual->proceso;
-        }
-        actual = actual->siguiente;
-    }
-
-    std::cout << "Proceso Normal de menor prioridad:" << std::endl;
-    if (menorPrioridadNormal != nullptr) {
-        menorPrioridadNormal->mostrar();
-    } else {
-        std::cout << "No hay procesos normales en la lista." << std::endl;
-    }
-
-    std::cout << "Proceso en Tiempo Real de mayor prioridad:" << std::endl;
-    if (mayorPrioridadTiempoReal != nullptr) {
-        mayorPrioridadTiempoReal->mostrar();
-    } else {
-        std::cout << "No hay procesos en tiempo real en la lista." << std::endl;
-    }
+	listaNormal.buscarProcesosListaNormal(listaNormal, menorPrioridadNormal);
+	listaTiempoReal.buscarProcesosListaTiempoReal(listaTiempoReal, mayorPrioridadTiempoReal);
 }
 
 
@@ -170,32 +140,9 @@ void Gestor::buscarProcesoPorNombreUsuario() {
     std::string nombreUsuario;
     std::cout << "Ingrese el nombre de usuario: ";
     std::cin >> nombreUsuario;
+	listaNormal.encontrarUsuarioListaNormal(nombreUsuario, listaNormal);
+	listaTiempoReal.encontrarUsuarioListaTiempoReal(nombreUsuario,listaTiempoReal);
 
-    bool encontrado = false;
-
-    // Buscar en la lista normal
-    NodoLista* actual = listaNormal.cabeza;
-    while (actual != nullptr) {
-        if (actual->proceso->getUsuario() == nombreUsuario) {
-            actual->proceso->mostrar();
-            encontrado = true;
-        }
-        actual = actual->siguiente;
-    }
-
-    // Buscar en la lista de tiempo real
-    actual = listaTiempoReal.cabeza;
-    while (actual != nullptr) {
-        if (actual->proceso->getUsuario() == nombreUsuario) {
-            actual->proceso->mostrar();
-            encontrado = true;
-        }
-        actual = actual->siguiente;
-    }
-
-    if (!encontrado) {
-        std::cout << "No se encontraron procesos para el usuario: " << nombreUsuario << std::endl;
-    }
 }
 
 
@@ -205,23 +152,15 @@ void Gestor::eliminarProcesoPorPID() {
     std::cin >> pid;
 
     Proceso* proceso = listaNormal.buscarPorPID(pid);
+	Lista lista = listaNormal;
     if (proceso == nullptr) {
         proceso = listaTiempoReal.buscarPorPID(pid);
+		Lista lista = listaTiempoReal;
     }
 
     if (proceso != nullptr) {
-		std::cout << "PID\tUSUARIO\tESTADO\tPRIORIDAD\tTIPO" << std::endl;
-        std::cout << proceso->getPID() << "\t" 
-                  << proceso->getUsuario() << "\t" 
-                  << (proceso->mostrar_proceso() ? "Ejecucion" : "Parado") << "\t" 
-                  << proceso->getPrioridad() << "\t\t" 
-                  << (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") << std::endl;
-        std::cout << "El proceso cuyo PID es " << proceso->getPID()
-                  << " es de tipo " << (proceso->esTiempoReal() ? "en tiempo real" : "normal")
-                  << ", su estado es " << (proceso->mostrar_proceso() ? "ejecucion" : "parado")
-                  << " y su prioridad es: " << proceso->getPrioridad() << std::endl;
-
-        listaNormal.eliminarPorPID(pid);
+		lista.mostrarProcesoParaEliminar(proceso);
+		listaNormal.eliminarPorPID(pid);
         listaTiempoReal.eliminarPorPID(pid);
     } else {
         std::cout << "No se encontró un proceso con el PID " << pid << std::endl;
@@ -235,32 +174,20 @@ void Gestor::cambiarPrioridadProcesoPorPID() {
     std::cin >> pid;
 
     Proceso* proceso = listaNormal.buscarPorPID(pid);
+	Lista lista = listaNormal;
     if (proceso == nullptr) {
         proceso = listaTiempoReal.buscarPorPID(pid);
+		Lista lista = listaTiempoReal;
     }
 
     if (proceso != nullptr) {
-        // Mostrar datos del proceso antes de cambiar la prioridad
-        std::cout << "PID\tUSUARIO\tESTADO\tPRIORIDAD\tTIPO" << std::endl;
-        std::cout << proceso->getPID() << "\t" 
-                  << proceso->getUsuario() << "\t" 
-                  << (proceso->mostrar_proceso() ? "Ejecución" : "Parado") << "\t" 
-                  << proceso->getPrioridad() << "\t\t" 
-                  << (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") << std::endl;
-
-        std::cout << "Ingrese la nueva prioridad para el proceso: ";
+        lista.mostrarProcesoParaCambiar(proceso);
+		std::cout << "Ingrese la nueva prioridad para el proceso: ";
         std::cin >> nuevaPrioridad;
-
-        // Cambiar la prioridad del proceso
+		// Cambiar la prioridad del proceso
         proceso->setPrioridad(nuevaPrioridad);
-
-        // Mostrar datos del proceso después de cambiar la prioridad
-        std::cout << "PID\tUSUARIO\tESTADO\tPRIORIDAD\tTIPO" << std::endl;
-        std::cout << proceso->getPID() << "\t" 
-                  << proceso->getUsuario() << "\t" 
-                  << (proceso->mostrar_proceso() ? "Ejecución" : "Parado") << "\t" 
-                  << proceso->getPrioridad() << "\t\t" 
-                  << (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") << std::endl;
+		//Mostrar proceso despues de cambiar la prioridad
+		lista.mostrarProcesoParaCambiar(proceso);
     } else {
         std::cout << "No se encontró un proceso con el PID " << pid << std::endl;
     }
