@@ -5,15 +5,14 @@
 #include <iostream>
 
 Gestor::Gestor() {
-    pidCounter = 0;
-    usuarioCounter = 1;
+    pidCounter = 0;   //contador de PIDs
+    usuarioCounter = 1;    //Contador de usuarios del sistema
     int n = 600;
-    
     arrayPIDs = new int[n];
     for (int i = 0; i < n; ++i) {
         arrayPIDs[i] = i + 300;
     }
-    std::random_shuffle(arrayPIDs, arrayPIDs + n);
+    std::random_shuffle(arrayPIDs, arrayPIDs + n);	//generar una lista con numemros ordenados aleatoriamente del 300 al 900
 
     prioridadesNormales = new int[40]; // Para procesos normales
     prioridadesTiempoReal = new int[100]; // Para procesos en tiempo real

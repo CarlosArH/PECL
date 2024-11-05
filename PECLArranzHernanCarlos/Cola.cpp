@@ -1,5 +1,5 @@
 #include "Cola.hpp"
-
+//Constructor de la cola que incializa la cola como una cola vacia
 Cola::Cola()
 {
 	primero = NULL;
@@ -7,18 +7,19 @@ Cola::Cola()
 	longitud = 0;
 }
 
+//Metodo para insertar segun la prioridad los procesos en las colas
 void Cola::insertar(Proceso* p) {
-    pnodoCola nuevo = new NodoCola(p, nullptr);
+    pnodoCola nuevo = new NodoCola(p, nullptr);    //crear un nodo con el nuevo proceso
     
     // Si la cola está vacía, simplemente inserta el nuevo nodo
     if (!primero) {
         primero = nuevo;
         ultimo = nuevo;
     } else {
-        pnodoCola actual = primero;
+        pnodoCola actual = primero;             //pone el puntero hacia el primer proceso para compararlo con el nuevo proceso
         pnodoCola anterior = nullptr;
 
-        // Buscar la posición correcta para insertar el nuevo nodo
+        // Buscar la posición correcta para insertar el nuevo nodo comparando con todos los nodos hasta encontrar la posicion
         while (actual != nullptr && actual->proceso->getPrioridad() <= p->getPrioridad()) {
             anterior = actual;
             actual = actual->siguiente;
@@ -40,19 +41,21 @@ void Cola::insertar(Proceso* p) {
     longitud++;
 }
 
-
+//Mostrar los procesos en la cola
 void Cola::mostrar(){
     pnodoCola aux = primero;
+	//Mientras haya un siguiente proceso se imprime un mensaje con la informacion de dicho proceso y se pasa al siguiente
     while (aux) {
         Proceso* proceso = aux->proceso; // Obtener el proceso del nodo
         cout << "El proceso cuyo PID es " << proceso->getPID() 
              << " es de tipo " << (proceso->esTiempoReal() ? "en tiempo real" : "normal") 
-             << ", su estado es " << (proceso->mostrar_proceso() ? "ejecución" : "parado") 
+             << ", su estado es " << (proceso->mostrar_proceso() ? "ejecucion" : "parado") 
              << " y su prioridad es: " << proceso->getPrioridad() << endl;
         aux = aux->siguiente; // Avanzar al siguiente nodo
     }
 }
 
+//Eleminar todos los procesos de la cola
 Proceso* Cola::eliminar()
 {
 	if (!primero) return nullptr;
