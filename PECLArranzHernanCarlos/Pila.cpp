@@ -37,21 +37,6 @@ void Pila::vaciar()
 	}
 }
 
-Proceso* Pila::cima() const
-{
-	return ultimo ? ultimo->proceso : nullptr;
-}
-
-void Pila::mostrar() const
-{
-	pnodoPila aux = ultimo;
-	cout << "\tEl contenido de la pila es: " << endl;
-	while(aux) {
-		aux->proceso->mostrar();
-		aux = aux->siguiente;
-	}
-	cout << endl;
-}
 
 int Pila::getLongitud() const
 {

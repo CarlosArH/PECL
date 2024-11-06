@@ -4,6 +4,7 @@
 #include "NodoLista.hpp"
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 class Lista {
 public:
@@ -15,10 +16,10 @@ public:
     void eliminarPorPID(int pid);
     void cambiarPrioridadPorPID(int pid, int nuevaPrioridad);
     int getLongitud() const;
-	void buscarProcesosListaNormal(Lista listaNormal, Proceso* menorPrioridadNormal);
-    void buscarProcesosListaTiempoReal(Lista listaTiempoReal, Proceso* mayorPrioridadTiempoReal);
-	void encontrarUsuarioListaNormal(string nombre, Lista listaNormal);
-	void encontrarUsuarioListaTiempoReal(string nombre, Lista listaTiempoReal);
+	void buscarProcesosListaNormal(Proceso* menorPrioridadNormal);
+    void buscarProcesosListaTiempoReal(Proceso* mayorPrioridadTiempoReal);
+	void encontrarUsuarioListaNormal(string nombre);
+	void encontrarUsuarioListaTiempoReal(string nombre);
 	pnodoLista cabeza;
     int longitud;
 	void mostrarProcesoParaEliminar(Proceso* proceso);

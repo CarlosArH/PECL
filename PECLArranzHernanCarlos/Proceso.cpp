@@ -52,6 +52,6 @@ void Proceso::establecerPrioridad(int* prioridadesTiempoReal, int* prioridadesNo
 }
 
 void Proceso::mostrar(){
-    cout << "PID: " << pid << ", Usuario: " << usuario << ", Estado: " << (estado ? "Ejecucion" : "Parado")
-         << ", Prioridad: " << prioridad << ", Tipo: " << (tiempoReal ? "Tiempo Real" : "Normal") << endl;
+    cout << "El proceso cuyo PID es " << pid  << " es de tipo en " << (tiempoReal ? "Tiempo Real" : "Normal") 
+		<< ", su estado es " << (estado ? "ejecucion" : "parado") << " y su prioridad es: " << prioridad << endl;
 }

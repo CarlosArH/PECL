@@ -11,12 +11,10 @@ public:
 	~Pila();
 	void insertar(Proceso* p);
 	void generarProceso(int usuarios, int* array, int i);
-	void mostrarProcesos() ;
+	void mostrarProcesos();
 	Proceso* extraer();
 	void vaciar() ;
 	pnodoPila getCima();
-	Proceso* cima() const;
-	void mostrar() const;
 	bool estaVacia() const;
 	int getLongitud() const;
 	

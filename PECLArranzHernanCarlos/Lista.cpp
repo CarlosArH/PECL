@@ -22,9 +22,26 @@ void Lista::insertar(Proceso* proceso) {
 
 void Lista::mostrar() const {
     NodoLista* actual = cabeza;
+
+    // Mostrar encabezados
+    std::cout << std::left << std::setw(10) << "PID" 
+              << std::setw(15) << "USUARIO" 
+              << std::setw(15) << "TIPO" 
+              << std::setw(15) << "ESTADO" 
+              << std::setw(10) << "PRIORIDAD" 
+              << std::endl;
+
+    // Mostrar cada proceso en la lista
     while (actual != nullptr) {
-        actual->proceso->mostrar();
-        actual = actual->siguiente;
+        // Imprimir directamente los atributos del proceso
+        std::cout << std::left << std::setw(10) << actual->proceso->getPID() 
+                  << std::setw(15) << actual->proceso->getUsuario() 
+                  << std::setw(15) << (actual->proceso->esTiempoReal() ? "Tiempo Real" : "Normal") 
+                  << std::setw(15) << (actual->proceso->mostrar_proceso() ? "Ejecucion" : "Parado") 
+                  << std::setw(10) << actual->proceso->getPrioridad() 
+                  << std::endl;
+
+        actual = actual->siguiente;  // Avanza al siguiente nodo
     }
 }
 
@@ -40,7 +57,7 @@ Proceso* Lista::buscarPorPID(int pid) {
 }
 
 void Lista::eliminarPorPID(int pid) {
-    NodoLista* actual = cabeza;
+     NodoLista* actual = cabeza;
     NodoLista* anterior = nullptr;
     while (actual != nullptr && actual->proceso->getPID() != pid) {
         anterior = actual;
@@ -68,32 +85,32 @@ int Lista::getLongitud() const {
     return longitud;
 }
 
-void Lista::buscarProcesosListaNormal(Lista listaNormal, Proceso* menorPrioridadNormal){
+void Lista::buscarProcesosListaNormal(Proceso* menorPrioridadNormal){
 	// Buscar proceso normal de menor prioridad
-    NodoLista* actual = listaNormal.cabeza;
+    NodoLista* actual = this->cabeza;
     while (actual != nullptr) {
         if (menorPrioridadNormal == nullptr || actual->proceso->getPrioridad() < menorPrioridadNormal->getPrioridad()) {
             menorPrioridadNormal = actual->proceso;
         }
         actual = actual->siguiente;
     }
-    std::cout << "Proceso Normal de menor prioridad:" << std::endl;
+    std::cout << "Normal menor prioridad >\t";
     if (menorPrioridadNormal != nullptr) {
         menorPrioridadNormal->mostrar();
     } else {
         std::cout << "No hay procesos normales en la lista." << std::endl;
     }
 }
-void Lista::buscarProcesosListaTiempoReal(Lista listaTiempoReal, Proceso* mayorPrioridadTiempoReal){
+void Lista::buscarProcesosListaTiempoReal(Proceso* mayorPrioridadTiempoReal){
 	// Buscar proceso en tiempo real de mayor prioridad
-    NodoLista* actual = listaTiempoReal.cabeza;
+    NodoLista* actual = this->cabeza;
     while (actual != nullptr) {
         if (mayorPrioridadTiempoReal == nullptr || actual->proceso->getPrioridad() > mayorPrioridadTiempoReal->getPrioridad()) {
             mayorPrioridadTiempoReal = actual->proceso;
         }
         actual = actual->siguiente;
     }
-	std::cout << "Proceso en Tiempo Real de mayor prioridad:" << std::endl;
+	std::cout << "Tiempo real menor prioridad >\t";
     if (mayorPrioridadTiempoReal != nullptr) {
         mayorPrioridadTiempoReal->mostrar();
     } else {
@@ -101,10 +118,10 @@ void Lista::buscarProcesosListaTiempoReal(Lista listaTiempoReal, Proceso* mayorP
     }
 }
 
-void Lista::encontrarUsuarioListaNormal(string nombre, Lista listaNormal){
+void Lista::encontrarUsuarioListaNormal(string nombre){
 	bool encontrado = false;
     // Buscar en la lista normal
-    NodoLista* actual = listaNormal.cabeza;
+    NodoLista* actual = this->cabeza;
     while (actual != nullptr) {
         if (actual->proceso->getUsuario() == nombre) {
             actual->proceso->mostrar();
@@ -113,10 +130,10 @@ void Lista::encontrarUsuarioListaNormal(string nombre, Lista listaNormal){
         actual = actual->siguiente;
     }
 }
-void Lista::encontrarUsuarioListaTiempoReal(string nombre, Lista listaTiempoReal){
+void Lista::encontrarUsuarioListaTiempoReal(string nombre){
 	bool encontrado = false;
 	// Buscar en la lista de tiempo real
-    NodoLista* actual = listaTiempoReal.cabeza;
+    NodoLista* actual = this->cabeza;
     while (actual != nullptr) {
         if (actual->proceso->getUsuario() == nombre) {
             actual->proceso->mostrar();
@@ -127,23 +144,23 @@ void Lista::encontrarUsuarioListaTiempoReal(string nombre, Lista listaTiempoReal
 }
 
 void Lista::mostrarProcesoParaEliminar(Proceso* proceso){
-	std::cout << "PID\tUSUARIO\tESTADO\tPRIORIDAD\tTIPO" << std::endl;
-	std::cout << proceso->getPID() << "\t" 
-				<< proceso->getUsuario() << "\t" 
-				<< (proceso->mostrar_proceso() ? "Ejecucion" : "Parado") << "\t" 
-				<< proceso->getPrioridad() << "\t\t" 
-				<< (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") << std::endl;
-	std::cout << "El proceso cuyo PID es " << proceso->getPID()
-				<< " es de tipo " << (proceso->esTiempoReal() ? "en tiempo real" : "normal")
-				<< ", su estado es " << (proceso->mostrar_proceso() ? "ejecucion" : "parado")
-				<< " y su prioridad es: " << proceso->getPrioridad() << std::endl;
+	// Mostrar encabezados
+    std::cout  << std::left << std::setw(10) << "PID" << std::setw(15) << "USUARIO" << std::setw(15) << "TIPO" << std::setw(15) << "ESTADO" << std::setw(10) << "PRIORIDAD" << std::endl;
+	std::cout  << std::left << proceso->getPID() 
+                  << std::setw(15) << proceso->getUsuario() 
+                  << std::setw(15) << (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") 
+                  << std::setw(15) << (proceso->mostrar_proceso() ? "Ejecucion" : "Parado") 
+                  << std::setw(10) << proceso->getPrioridad() 
+                  << std::endl;
+	proceso->mostrar();
 }
 
 void Lista::mostrarProcesoParaCambiar(Proceso* proceso){
-        std::cout << "PID\tUSUARIO\tESTADO\tPRIORIDAD\tTIPO" << std::endl;
-        std::cout << proceso->getPID() << "\t" 
-                  << proceso->getUsuario() << "\t" 
-                  << (proceso->mostrar_proceso() ? "Ejecución" : "Parado") << "\t" 
-                  << proceso->getPrioridad() << "\t\t" 
-                  << (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") << std::endl;
+        std::cout << std::left << std::setw(10) << "PID" << std::setw(15) << "USUARIO" << std::setw(15) << "TIPO" << std::setw(15) << "ESTADO" << std::setw(10) << "PRIORIDAD" << std::endl;
+        std::cout << std::left << std::setw(10) << proceso->getPID() 
+				  << std::setw(15) << proceso->getUsuario() 
+                  << std::setw(15) << (proceso->esTiempoReal() ? "Tiempo Real" : "Normal") 
+                  << std::setw(15) << (proceso->mostrar_proceso() ? "Ejecucion" : "Parado") 
+                  << std::setw(10) << proceso->getPrioridad() 
+                  << std::endl;
 }

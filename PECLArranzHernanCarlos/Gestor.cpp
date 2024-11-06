@@ -19,13 +19,13 @@ Gestor::Gestor() {
 
     // Generar prioridades para procesos normales (-19 a +19)
     for (int i = 0; i < 40; ++i) {
-        prioridadesNormales[i] = rand() % 39 - 19; // Generar números entre -19 y +19
+        prioridadesNormales[i] = i - 19; // Generar números entre -19 y +19
     }
     std::random_shuffle(prioridadesNormales, prioridadesNormales + 40);
 
     // Generar prioridades para procesos en tiempo real (0 a 99)
     for (int i = 0; i < 100; ++i) {
-        prioridadesTiempoReal[i] = rand() % 100; // Generar números entre 0 y 99
+        prioridadesTiempoReal[i] = i; // Generar números entre 0 y 99
     }
     std::random_shuffle(prioridadesTiempoReal, prioridadesTiempoReal + 100);
 	indexNormales = 0;
@@ -130,8 +130,9 @@ void Gestor::muestraProcesosTiempoReal() {
 void Gestor::buscarProcesos() {
     Proceso* menorPrioridadNormal = nullptr;
     Proceso* mayorPrioridadTiempoReal = nullptr;
-	listaNormal.buscarProcesosListaNormal(listaNormal, menorPrioridadNormal);
-	listaTiempoReal.buscarProcesosListaTiempoReal(listaTiempoReal, mayorPrioridadTiempoReal);
+	//listaNormal.buscarProcesosListaNormal(listaNormal, menorPrioridadNormal);
+	listaNormal.buscarProcesosListaNormal(menorPrioridadNormal);
+	listaTiempoReal.buscarProcesosListaTiempoReal(mayorPrioridadTiempoReal);
 }
 
 
@@ -139,8 +140,8 @@ void Gestor::buscarProcesoPorNombreUsuario() {
     std::string nombreUsuario;
     std::cout << "Ingrese el nombre de usuario: ";
     std::cin >> nombreUsuario;
-	listaNormal.encontrarUsuarioListaNormal(nombreUsuario, listaNormal);
-	listaTiempoReal.encontrarUsuarioListaTiempoReal(nombreUsuario,listaTiempoReal);
+	listaNormal.encontrarUsuarioListaNormal(nombreUsuario);
+	listaTiempoReal.encontrarUsuarioListaTiempoReal(nombreUsuario);
 
 }
 
@@ -150,17 +151,28 @@ void Gestor::eliminarProcesoPorPID() {
     std::cout << "Ingrese el PID del proceso a eliminar: ";
     std::cin >> pid;
 
+    // Buscar en la lista normal
     Proceso* proceso = listaNormal.buscarPorPID(pid);
-	Lista lista = listaNormal;
+
+    // Si no se encuentra, buscar en la lista de tiempo real
     if (proceso == nullptr) {
         proceso = listaTiempoReal.buscarPorPID(pid);
-		Lista lista = listaTiempoReal;
     }
-
+	// Actualizar el estado de ejecución y apilar el proceso
+	proceso->setEjecucion(false);
+	pila.insertar(proceso);
+	
+    // Si se encontró el proceso, proceder a eliminarlo
     if (proceso != nullptr) {
-		lista.mostrarProcesoParaEliminar(proceso);
-		listaNormal.eliminarPorPID(pid);
-        listaTiempoReal.eliminarPorPID(pid);
+        // Mostrar información del proceso a eliminar
+        if (listaNormal.buscarPorPID(pid) != nullptr) {
+            listaNormal.mostrarProcesoParaEliminar(proceso);
+            listaNormal.eliminarPorPID(pid);
+        } else {
+            listaTiempoReal.mostrarProcesoParaEliminar(proceso);
+            listaTiempoReal.eliminarPorPID(pid);
+        }
+
     } else {
         std::cout << "No se encontró un proceso con el PID " << pid << std::endl;
     }
